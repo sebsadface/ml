@@ -16,7 +16,23 @@ let thd3 (_,_,x) = x (* gets the third element of a triple *)
 
  (* 1 *)
 let is_older ((date1 : int * int * int), (date2 : int * int * int)) =
-  false
+  if thd3(date1) < thd3(date2) then 
+    true
+  else 
+    if thd3(date1) > thd3(date2) then 
+      false
+    else
+      if snd3(date1) < snd3(date2) then
+        true
+      else 
+        if snd3(date1) > snd3(date2) then
+          false
+        else
+          if fst3(date1) < fst3(date2) then 
+            true
+          else
+            false
+
 
 (* 2 *)
 let rec number_in_month ((dates : (int * int * int) list), (month : int)) =
