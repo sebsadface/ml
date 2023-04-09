@@ -1,65 +1,99 @@
-#use "hw1.ml"
+(* Test cases *)
 
-let date1 = (9, 4, 2023)
-let date2 = (9, 4, 2023)
-let date3 = (8, 9, 2023)
-let date4 = (15, 1, 2021)
-let date5 = (14, 1, 2021)
-let date6 = (29, 3, 1890)
-let date7 = (18, 12, 1998)
+(* Test cases for is_older *)
+let test_is_older_1 = assert (is_older (((5, 4, 2021), (5, 4, 2022))) = true)
+let test_is_older_2 = assert (is_older (((1, 6, 2021), (5, 4, 2021))) = false)
+let test_is_older_3 = assert (is_older (((5, 4, 2022), (5, 4, 2022))) = false)
+let test_is_older_4 = assert (is_older (((31, 12, 1999), (1, 1, 2000))) = true)
+let test_is_older_5 = assert (is_older (((29, 2, 2020), (1, 3, 2020))) = true)
+let test_is_older_6 = assert (is_older (((15, 4, 2021), (15, 4, 2021))) = false)
 
-let dates1 = [date1; date2; date3; date4; date5; date6; date7]
-let dates2 = [(12, 11, 1020); (25, 11, 2032); (11, 11, 1111); (31, 1, 100); (19, 11, 12); (23, 2, 503); (12, 5, 1012)]
-let dates3 = [(12, 5, 1020); (25, 4, 2032); (11, 3, 1111); (31, 1, 100); (19, 2, 12)]
-let dates4 = [(1, 1, 1)]
-let dates5 = [(2,2,2); (3,3,3)]
-let dates6 = [(2,2,2); (3,2,3); (4,2,4)]
-let dates7 = [(1,2,3); (4,5,6); (7,8,9); (10, 11, 12)]
+(* Test cases for number_in_month *)
+let dates_1 = [(1, 1, 2021); (15, 4, 2021); (20, 4, 2021); (31, 12, 2020)]
+let test_number_in_month_1 = assert (number_in_month (dates_1, 1) = 1)
+let test_number_in_month_2 = assert (number_in_month (dates_1, 4) = 2)
+let test_number_in_month_3 = assert (number_in_month (dates_1, 12) = 1)
+let test_number_in_month_4 = assert (number_in_month (dates_1, 3) = 0)
+let test_number_in_month_5 = assert (number_in_month ([], 6) = 0)
+let test_number_in_month_6 = assert (number_in_month (dates_1, 11) = 0)
 
-(* test 1*)
-let test_is_older1 = is_older(date1, date2) = false
-let test_is_older2 = is_older(date2, date3) = true
-let test_is_older3 = is_older(date3, date4) = false
-let test_is_older4 = is_older(date4, date5) = false
-let test_is_older5 = is_older(date5, date6) = false
-let test_is_older6 = is_older(date6, date7) = true
+(* Test cases for number_in_months *)
+let test_number_in_months_1 = assert (number_in_months (dates_1, [1; 4]) = 3)
+let test_number_in_months_2 = assert (number_in_months (dates_1, [1; 2; 3; 4; 5]) = 3)
+let test_number_in_months_3 = assert (number_in_months (dates_1, []) = 0)
+let test_number_in_months_4 = assert (number_in_months (dates_1, [12]) = 1)
+let test_number_in_months_5 = assert (number_in_months ([], [1; 2; 3; 4]) = 0)
+let test_number_in_months_6 = assert (number_in_months (dates_1, [10; 11]) = 0)
 
-(* test 2*)
-let test_number_in_month1 = number_in_month(dates1, 4) = 2
-let test_number_in_month2 = number_in_month(dates1, 12) = 1
-let test_number_in_month3 = number_in_month(dates2, 11) = 4
-let test_number_in_month4 = number_in_month(dates4, 1) = 1
-let test_number_in_month5 = number_in_month(dates3, 9) = 0
-let test_number_in_month6 = number_in_month(dates5, 3) = 1
+(* Test cases for dates_in_month *)
+let test_dates_in_month_1 = assert (dates_in_month (dates_1, 1) = [(1, 1, 2021)])
+let test_dates_in_month_2 = assert (dates_in_month (dates_1, 4) = [(15, 4, 2021); (20, 4, 2021)])
+let test_dates_in_month_3 = assert (dates_in_month (dates_1, 12) = [(31,12, 2020)])
+let test_dates_in_month_4 = assert (dates_in_month (dates_1, 3) = [])
+let test_dates_in_month_5 = assert (dates_in_month ([], 6) = [])
+let test_dates_in_month_6 = assert (dates_in_month (dates_1, 11) = [])
 
-(* test 3*)
-let test_number_in_months1 = number_in_months(dates1, [4;9;1;3;12]) = 7
-let test_number_in_months2 = number_in_months(dates2, [11;2;3]) = 5
-let test_number_in_months3 = number_in_months(dates3, [11;2;3]) = 2
-let test_number_in_months4 = number_in_months(dates4, [11;2;3]) = 0
-let test_number_in_months5 = number_in_months(dates5, [2]) = 1
-let test_number_in_months6 = number_in_months(dates7, [2;5;8;11]) = 4
+(* Test cases for dates_in_months *)
+let test_dates_in_months_1 = assert (dates_in_months (dates_1, [1; 4]) = [(1, 1, 2021); (15, 4, 2021); (20, 4, 2021)])
+let test_dates_in_months_2 = assert (dates_in_months (dates_1, [1; 2; 3; 4; 5]) = [(1, 1, 2021); (15, 4, 2021); (20, 4, 2021)])
+let test_dates_in_months_3 = assert (dates_in_months (dates_1, []) = [])
+let test_dates_in_months_4 = assert (dates_in_months (dates_1, [12]) = [(31, 12, 2020)])
+let test_dates_in_months_5 = assert (dates_in_months ([], [1; 2; 3; 4]) = [])
+let test_dates_in_months_6 = assert (dates_in_months (dates_1, [10; 11]) = [])
 
-(* test 4*)
-let test_dates_in_month1 = dates_in_month(date1, 4) = [date1; date2]
+(* Test cases for get_nth *)
+let str_list = ["a"; "b"; "c"; "d"; "e"]
+let test_get_nth_1 = assert (get_nth (str_list, 1) = "a")
+let test_get_nth_2 = assert (get_nth (str_list, 3) = "c")
+let test_get_nth_3 = assert (get_nth (str_list, 5) = "e")
+let test_get_nth_4 = assert (get_nth (str_list, 2) = "b")
+let test_get_nth_5 = assert (get_nth (str_list, 4) = "d")
+let test_get_nth_6 = assert (get_nth (["only"], 1) = "only")
 
+(* Test cases for string_of_date *)
+let test_string_of_date_1 = assert (string_of_date (1, 1, 2021) = "January-1-2021")
+let test_string_of_date_2 = assert (string_of_date (15, 4, 2021) = "April-15-2021")
+let test_string_of_date_3 = assert (string_of_date (31, 12, 2020) = "December-31-2020")
+let test_string_of_date_4 = assert (string_of_date (29, 2, 2020) = "February-29-2020")
+let test_string_of_date_5 = assert (string_of_date (30, 6, 2021) = "June-30-2021")
+let test_string_of_date_6 = assert (string_of_date (25, 12, 2023) = "December-25-2023")
 
-(* test 5*)
+(* Test cases for number_before_reaching_sum *)
+let test_number_before_reaching_sum_1 = assert (number_before_reaching_sum (10, [2; 4; 6; 8]) = 2)
+let test_number_before_reaching_sum_2 = assert (number_before_reaching_sum (14, [2; 4; 6; 8]) = 3)
+let test_number_before_reaching_sum_3 = assert (number_before_reaching_sum (0,[2; 4; 6; 8]) = 0)
+let test_number_before_reaching_sum_4 = assert (number_before_reaching_sum (1, [1; 1; 1; 1; 1]) = 0)
+let test_number_before_reaching_sum_5 = assert (number_before_reaching_sum (5, [1; 1; 1; 1; 1]) = 4)
+let test_number_before_reaching_sum_6 = assert (number_before_reaching_sum (15, [1; 2; 3; 4; 5]) = 4)
 
-(* test 6*)
+(* Test cases for what_month *)
+let test_what_month_1 = assert (what_month 1 = 1)
+let test_what_month_2 = assert (what_month 31 = 1)
+let test_what_month_3 = assert (what_month 32 = 2)
+let test_what_month_4 = assert (what_month 60 = 3)
+let test_what_month_5 = assert (what_month 61 = 3)
+let test_what_month_6 = assert (what_month 365 = 12)
 
-(* test 7*)
+(* Test cases for month_range *)
+let test_month_range_1 = assert (month_range (1, 7) = [1; 1; 1; 1; 1; 1; 1])
+let test_month_range_2 = assert (month_range (32, 61) = [2; 2; 2; 2; 2; 2; 2; 2; 2; 2; 2; 2; 2; 2; 2; 2; 2; 2; 2; 2; 2; 2; 2; 2; 2; 2; 2; 2; 3; 3])
+let test_month_range_3 = assert (month_range (1, 1) = [1])
+let test_month_range_4 = assert (month_range (31, 32) = [1; 2])
+let test_month_range_5 = assert (month_range (59, 60) = [2; 3])
+let test_month_range_6 = assert (month_range (364, 365) = [12; 12])
 
-(* test 8*)
+(* Test cases for oldest *)
+let test_oldest_1 = assert (oldest dates_1 = Some (31, 12, 2020))
+let test_oldest_2 = assert (oldest [(1, 1, 2021); (15, 4, 2021); (20, 4, 2021)] = Some (1, 1, 2021))
+let test_oldest_3 = assert (oldest [(15, 4, 2021); (20, 4, 2021)] = Some (15, 4, 2021))
+let test_oldest_4 = assert (oldest [] = None)
+let test_oldest_5 = assert (oldest [(1, 1, 2021); (1, 1, 2021); (1, 1, 2021)] = Some (1, 1, 2021))
+let test_oldest_6 = assert (oldest [(31, 12, 2020); (1, 1, 2021); (15, 4, 2021)] = Some (31, 12, 2020))
 
-(* test 9*)
-
-(* test 10*)
-
-(* test 11*)
-
-(* test 12*)
-
-(* test 13*)
-
-(* test 14*)
+(* Test cases for cumulative_sum *)
+let test_cumulative_sum_1 = assert (cumulative_sum [1; 2; 3; 4; 5] = [1; 3; 6; 10; 15])
+let test_cumulative_sum_2 = assert (cumulative_sum [0; 0; 0; 0; 0] = [0; 0; 0; 0; 0])
+let test_cumulative_sum_3 = assert (cumulative_sum [2; 2; 2; 2; 2] = [2; 4; 6; 8; 10])
+let test_cumulative_sum_4 = assert (cumulative_sum [1; -1; 1; -1; 1] = [1; 0; 1; 0; 1])
+let test_cumulative_sum_5 = assert (cumulative_sum [10; -5; 15; -20; 30] = [10; 5; 20; 0; 30])
+let test_cumulative_sum_6 = assert (cumulative_sum [] = [])
