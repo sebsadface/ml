@@ -119,6 +119,22 @@ let rec remove_duplicates (lst : 'a list) =
 let number_in_months_challenge ((dates : (int * int * int) list), (months : int list)) = 
   number_in_months(dates, remove_duplicates(months))
 
-let dates_int_months_challenge ((dates : (int * int * int) list), (months : int list)) = 
+let dates_in_months_challenge ((dates : (int * int * int) list), (months : int list)) = 
   dates_in_months(dates, remove_duplicates(months))
 
+(* 14 *)
+let reasonable_date (date : (int * int * int)) =
+  let days_in_month (month : int) = 
+    let rec get_nth_int ((ls : int list), (n : int)) = 
+      if n = 1 then
+        List.hd ls 
+      else 
+        get_nth_int(List.tl ls, n - 1)
+    in
+    let days = ([31; 29; 31; 30; 31; 30; 31; 31; 30; 31; 30; 31], [31; 28; 31; 30; 31; 30; 31; 31; 30; 31; 30; 31]) in
+      get_nth_int((if (thd3(date) mod 400 = 0) || (thd3(date) mod 4 = 0 && thd3(date) mod 100 <> 0) then fst(days) else snd(days)),  snd3(date))
+  in
+  (thd3(date) >= 1) &&
+  (snd3(date) >=1 && snd3(date) <= 12) &&
+  (fst3(date) >= 1 && fst3(date) <= days_in_month(snd3(date)))
+      
