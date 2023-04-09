@@ -42,7 +42,7 @@ let rec dates_in_month ((dates : (int * int * int) list), (month : int)) =
     []
   else
     if snd3(List.hd dates) = month then 
-      snd3(List.hd dates) :: dates_in_month(List.tl dates, month) 
+      List.hd dates :: dates_in_month(List.tl dates, month) 
     else 
       dates_in_month(List.tl dates, month)
 
@@ -102,4 +102,23 @@ let cumulative_sum (nums : int list) =
        new_sum :: sum_helper (List.tl lst, new_sum)
   in
   sum_helper(nums, 0)
+
+(* 13 *)
+let rec remove_duplicates (lst : 'a list) =
+  let rec is_duplicate ((element : 'a), (lst : 'a list)) = 
+    if lst = [] then
+      false
+    else
+      element = List.hd lst || is_duplicate (element, List.tl lst)
+  in
+  if lst = [] then
+    []
+  else 
+    if is_duplicate(List.hd lst, List.tl lst) then remove_duplicates(List.tl lst) else List.hd lst :: remove_duplicates(List.tl lst)
+
+let number_in_months_challenge ((dates : (int * int * int) list), (months : int list)) = 
+  number_in_months(dates, remove_duplicates(months))
+
+let dates_int_months_challenge ((dates : (int * int * int) list), (months : int list)) = 
+  dates_in_months(dates, remove_duplicates(months))
 
