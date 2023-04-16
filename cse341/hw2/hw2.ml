@@ -1,5 +1,4 @@
 (* CSE 341, HW2 Provided Code *)
-fs
 (* This is from file json.ml in this directory. json.ml
  * contains the main datatype definition we will use throughout the
  * assignment. You will want to look over this file before starting. *)
@@ -30,67 +29,155 @@ let json_string_of_float f =
   
 (* 1 *)
 let make_silly_json i =
-  failwith "Need to implement: make_silly_json"
+  let rec helper n = 
+    match n with
+    | 0  -> []
+    | _ -> Object[("n", Num (float_of_int n)); ("b", True)] :: helper(n - 1)
+  in
+  Array (helper i)
 
 (* 2 *)
 let rec concat_with (sep, ss) =
-  failwith "Need to implement: concat_with"
+  match ss with
+  | [] -> ""
+  | a :: [] -> a
+  | a :: b :: ss' -> a ^ sep ^ b ^ sep ^ concat_with(sep, ss')
 
 (* 3 *)
-let quote_string s =
-  failwith "Need to implement: quote_string"
-
+let quote_string s = "\"" ^ s ^ "\""
 
 (* 4 *)
 let rec string_of_json j =
-  failwith "Need to implement: string_of_json"
+  let rec array_helper js = 
+    match js with
+    | [] -> []
+    | j :: js' -> string_of_json j :: array_helper js'
+  in
+  let rec object_helper jo =
+    match jo with
+    | [] -> []
+    | j :: jo' -> 
+      match j with (name, content) -> (quote_string(name) ^ " : " ^ string_of_json(content)) :: object_helper jo'
+  in
+  match j with
+  | Num f -> json_string_of_float f
+  | String s -> quote_string s
+  | False -> "false"
+  | True -> "true"
+  | Null -> "null"
+  | Array js -> "[" ^ concat_with(", ", array_helper js) ^ "]"
+  | Object jo -> "{" ^ concat_with(", ", object_helper jo) ^ "}"
 
 (* 5 *)
 let rec take (n,xs) = 
-  failwith "Need to implement: take"
+  match xs with 
+  | [] -> []
+  | s :: xs' ->
+    match n with 0 -> [] | _ -> s :: take(n - 1, xs')
 
 (* 6 *)
 let rec firsts xs = 
-  failwith "Need to implement: firsts"
+  match xs with 
+  | [] -> []
+  | s :: xs' -> match s with (a , b) -> a :: firsts(xs')
 
 (* 7 *)
-(* write your comment here *)
+(* The two expressions always evaluate to the same value because
+   they both take the first n elements of the list xs and then extract
+   the first element of each pair. The order of these operations does 
+   not affect the result beacause both firsts and take don't change the
+   order of the list. 
+   
+   In terms of evaluation time, firsts(take (n, xs)) might be faster because 
+   firsts, in this case, only needs to traverse the first n elements of the 
+   list xs, whereas take(n, firsts xs) requires firsts to traverse the entire list 
+   to extract the first element of each pair.*)
 
 (* 8 *)
 let rec assoc (k, xs) =
-  failwith "Need to implement: assoc"
+  match xs with 
+  | [] -> None
+  | s :: xs' -> match s with (k1, v1) -> if k1 = k then Some v1 else assoc(k, xs')
 
 (* 9 *)
 let dot (j, f) = 
-  failwith "Need to implement: dot"
+  match j with
+  | Object obj -> assoc(f, obj) 
+  | _ -> None
 
 (* 10 *)
 let rec dots (j, fs) =
-  failwith "Need to implement: dots"
-
+  match fs with 
+  | [] -> None
+  | f :: [] -> dot(j, f)
+  | f :: fs' -> 
+    match dot(j, f) with 
+    | None -> None
+    | Some v -> dots(v, fs')  
+  
 (* 11 *)
 let one_fields j =
-  failwith "Need to implement: one_fields"
+  let rec loop (obj, acc) = 
+    match obj with
+    | [] -> acc
+    | j :: obj' -> match j with (name, content) -> loop(obj', name :: acc)
+  in
+  match j with 
+  | Object obj -> loop(obj, [])
+  | _ -> []
 
 (* 12 *)
-let no_repeats xs = 
-  failwith "Need to implement: no_repeats"
+let no_repeats xs = List.length xs = 0 || dedup xs = xs 
 
 (* 13 *)
 let rec recursive_no_field_repeats j = 
-  failwith "Need to implement: recursive_no_field_repeats"
+  let rec arr_helper arr =
+    match arr with
+    | [] -> true
+    | j :: arr' -> recursive_no_field_repeats j && arr_helper arr'
+  in
+  let rec obj_helper obj = 
+    match obj with
+    | [] -> true
+    | j :: obj' -> match j with (name, content) -> recursive_no_field_repeats(content) && obj_helper(obj')
+  in
+  match j with
+  | Object obj -> no_repeats(one_fields j) && obj_helper obj
+  | Array arr -> arr_helper arr
+  | _ -> true
 
 (* 14 *)
 let count_occurrences (xs, e) =
-  failwith "Need to implement: count_occurrences"
+  let rec loop (xs, e, cur_str, cur_count, acc) =
+    match xs with
+    | [] -> (cur_str, cur_count) :: acc
+    | s :: xs' -> 
+      if s < cur_str then
+       raise e
+      else if cur_str = s then 
+        loop(xs', e, cur_str, cur_count + 1, acc)
+      else 
+        loop(xs', e, s, 1, if cur_count = 0 then acc else (cur_str, cur_count) :: acc)
+  in
+  loop(xs, e, "", 0, [])
 
 (* 15 *)
 let rec string_values_for_access_path (fs, js) = 
-  failwith "Need to implement: string_values_for_access_path"
+  match js with
+  | [] -> []
+  | j :: js' -> 
+    match dots(j, fs) with
+    | Some String s -> s :: string_values_for_access_path(fs, js')
+    | _ -> string_values_for_access_path(fs, js')
 
 (* 16 *)
 let rec filter_access_path_value (fs, v, js) = 
-  failwith "Need to implement: filter_access_path_value"
+  match js with
+  | [] -> []
+  | j :: js' -> 
+    match dots(j, fs) with
+    | Some String s -> if s = v then j :: filter_access_path_value(fs, v, js') else filter_access_path_value(fs, v, js')
+    | _ -> filter_access_path_value(fs, v, js')
 
 (* Types for use in problems 17-20. *)
 type rect = { min_latitude: float; max_latitude: float;

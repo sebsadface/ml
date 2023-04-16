@@ -27,27 +27,27 @@ open Json
     [Object [("n", Num 2.); ("b", True)]; 
      Object [("n", Num 1.); ("b", True)]]
 
-(** let test2 = concat_with (";", ["1"; "2"]) = "1;2" **)
+let test2 = concat_with (";", ["1"; "2"]) = "1;2" 
 
-(** let test3 = quote_string "hello" = "\"hello\"" **)
+let test3 = quote_string "hello" = "\"hello\""
 
-(** let test4 = string_of_json json_obj = "{\"foo\" : 3.14159, \"bar\" : [1, \"world\", null], \"ok\" : true}" **)
+let test4 = string_of_json json_obj = "{\"foo\" : 3.14159, \"bar\" : [1, \"world\", null], \"ok\" : true}"
 
-(** let test5 = take (2, [4; 5; 6; 7]) = [4; 5] **)
+let test5 = take (2, [4; 5; 6; 7]) = [4; 5]
 
-(** let test6 = firsts [(1,2); (3,4)] = [1; 3] **)
+let test6 = firsts [(1,2); (3,4)] = [1; 3]
 
 (** don't forget to write a comment for problem 7 **)
 
-(** let test8 = assoc ("foo", [("bar",17);("foo",19)]) = Some 19 **)
+let test8 = assoc ("foo", [("bar",17);("foo",19)]) = Some 19
 
-(** let test9 = dot (json_obj, "ok") = Some True **)
+let test9 = dot (json_obj, "ok") = Some True
 
-(** let test10 = dots (Object [("f", Object [("g", String "gotcha")])], ["f"; "g"]) = Some (String "gotcha") **)
+let test10 = dots (Object [("f", Object [("g", String "gotcha")])], ["f"; "g"]) = Some (String "gotcha")
 
-(** let test11 = one_fields json_obj = List.rev ["foo";"bar";"ok"] **)
+let test11 = one_fields json_obj = List.rev ["foo";"bar";"ok"]
 
-(** let test12 = not (no_repeats ["foo";"bar";"foo"]) **)
+let test12 = not (no_repeats ["foo";"bar";"foo"])
 
 let nest = Array [Object [];
                   Object[("a",True);
@@ -55,28 +55,28 @@ let nest = Array [Object [];
                                      ("foo",True)]);
                          ("c",True)];
                   Object []]
-(** let test13 = not (recursive_no_field_repeats nest) **)
+let test13 = not (recursive_no_field_repeats nest)
 
 (* Any order is allowed by the specification, so it's ok to fail this test because of a different order. 
    You can edit this test to match your implementation's order. *)
-(** let test14a = count_occurrences (["a"; "a"; "b"], (Failure "")) = [("b",1);("a",2)] **)
+let test14a = count_occurrences (["a"; "a"; "b"], (Failure "")) = [("b",1);("a",2)]
 
 (* test to see that an exception is thrown when the input list is not sorted *)
-(** let test14b = try count_occurrences (["b"; "a"; "b"], (Failure "")) = []
-              with Failure _ -> true **)
+let test14b = try count_occurrences (["b"; "a"; "b"], (Failure "")) = []
+              with Failure _ -> true
 
-(** let test15 = string_values_for_access_path (["x"; "y"], [Object [("a", True);("x", Object [("y", String "foo")])];
+let test15 = string_values_for_access_path (["x"; "y"], [Object [("a", True);("x", Object [("y", String "foo")])];
                                                              Object [("x", Object [("y", String "bar")]); ("b", True)]])
-            = ["foo";"bar"] **)
+            = ["foo";"bar"]
 
-(** let test16 = filter_access_path_value (["x"; "y"], "foo",
+let test16 = filter_access_path_value (["x"; "y"], "foo",
                                            [Object [("x", Object [("y", String "foo")]); ("z", String "bar")];
                                             Object [("x", Object [("y", String "foo")]); ("z", String "baz")];
                                             Object [("x", String "a")];
                                             Object []])
              = 
              [Object [("x", Object [("y", String "foo")]); ("z", String "bar")];
-              Object [("x", Object [("y", String "foo")]); ("z", String "baz")]] **)
+              Object [("x", Object [("y", String "foo")]); ("z", String "baz")]]
 
 
 let pgascse =
