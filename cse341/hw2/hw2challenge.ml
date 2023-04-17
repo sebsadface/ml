@@ -79,7 +79,7 @@ type token =
    tokens. Here is a provided function to convert tokens to strings. *)
 let string_of_token t = 
 match t with
-  NumLit    s ->  s
+| NumLit    s ->  s
 | StringLit s -> quote_string s
 | FalseTok    -> "false"
 | TrueTok     -> "true"
@@ -151,8 +151,14 @@ let lexical_error msg = raise (LexicalError ("Lexical error: " ^ msg))
 *)
 let consume_string_literal cs = 
   (* TODO: add about 10 lines of code to this function, and edit the "failwith" line below. *)
+  let rec helper (str, cs) = 
+    match cs with
+    | '\"' :: cs' -> (str, cs')
+    | a :: cs' -> helper(str ^ char_to_string a, cs')
+    | _ -> lexical_error "No closing double quote"
+  in
   match cs with
-    '\"' :: cs -> failwith "consume_string_literal should now call a helper function to consume rest of string"
+  | '\"' :: cs' -> helper("", cs')
   | _ -> lexical_error "Expecting string literal."
 
 
@@ -182,8 +188,21 @@ let consume_string_literal cs =
 
    Either of the above strategies will receive full credit.
 *)
+
 let consume_keyword cs = 
-  (* TODO, about 15 lines *) failwith "consume_keyword unimplemented"
+(* TODO, about 15 lines *)
+let lookup_table =  [("true", TrueTok); ("false", FalseTok); ("null", NullTok)] in
+let rec helper (n, cs) = if n = 0 then cs else
+  match cs with
+  | [] -> []
+  | c :: cs' -> helper(n - 1, cs')
+in
+  match assoc(string_of_char_list(take(4, cs)), lookup_table) with
+  | Some tok -> (tok, helper(4, cs))
+  | None -> 
+    match assoc(string_of_char_list(take(5, cs)), lookup_table) with
+    | Some tok -> (tok, helper(5, cs))
+    | None -> lexical_error "Expecting keyword"
 
 (* Here's a provided consumer for numbers, since it's a bit complex.
    You shouldn't need to understand this code unless you want to.
@@ -305,6 +324,13 @@ let tokenize_char_list cs =
     | '\n' :: cs -> go (cs, acc)  (* ignore newlines *)
     | '{'  :: cs -> go (cs, (LBrace :: acc))
     (* TODO, about 7 lines: several more cases here *)
+    | '}' :: cs -> go(cs, (RBrace :: acc))
+    | ']' :: cs -> go(cs, (RBracket :: acc))
+    | '[' :: cs -> go(cs, (LBracket :: acc))
+    | ',' :: cs -> go(cs, (Comma :: acc))
+    | ':' :: cs -> go(cs, (Colon :: acc))
+    | '\t' :: cs -> go(cs, acc)
+    | ' ' :: cs -> go(cs, acc)
     | c :: cs ->
        if is_digit c || c = '-'
        then
@@ -313,6 +339,13 @@ let tokenize_char_list cs =
        else (* TODO, about 15 lines: check for string literals and keywords here 
                and call the corresponding consumer. otherwise, call lexical error
                as below. *)
+          if c = '\"' then 
+            let (s, cs) = consume_string_literal(c :: cs) in 
+            go (cs, (StringLit s :: acc)) 
+          else if c = 't' || c  = 'f' || c = 'n' then
+            let (k, cs) = consume_keyword(c :: cs) in
+            go (cs, (k :: acc)) 
+          else
          lexical_error ("Unknown character " ^ char_to_string c)
   in
   go (cs, [])
@@ -322,7 +355,8 @@ let tokenize_char_list cs =
 
    Hint: use char_list_of_string and tokenize_char_list *)
 let tokenize (s : string) : token list =
-  (* TODO, 1 line *) failwith "tokenize unimplemented"
+  (* TODO, 1 line *)
+  tokenize_char_list (char_list_of_string s)
 
 
 (* The tokenizer produces a list of tokens, which we now need to
@@ -363,7 +397,10 @@ let syntax_error (ts, msg) =
    call `syntax_error` with the token list and an appropriate message.
 *)
 let parse_string (ts : token list) : string * token list =
-  (* TODO, about 3 lines *) failwith "parse_string unimplemented"
+  (* TODO, about 3 lines *) 
+  match ts with 
+  | StringLit s :: ts -> (s, ts)
+  | _ -> syntax_error(ts, "Expecting string literal.") 
 
 (* It is often useful to consume a single token from the token list
    and throw it away, returning the rest of the tokens and throwing an
@@ -375,7 +412,10 @@ let parse_string (ts : token list) : string * token list =
    If the token is not there as expected, call syntax_error with an
    appropriate message. *)
 let expect (t, ts) = 
-  (* TODO, about 6 lines *) failwith "expect unimplemented"
+  (* TODO, about 6 lines *)
+  match ts with
+  | tok :: ts -> if tok = t then ts else syntax_error(ts, "Expecting matching token")
+  | _ -> syntax_error(ts, "Expecting valid token")
 
 
 (* We're now ready to start writing a `parse_json` function, which
@@ -405,7 +445,7 @@ let rec parse_json (ts : token list) : json * token list =
        Hint: use `parse_string` for the field name, `expect` for the
              colon, and a recursive call to `parse_json` for the value. *)
   let parse_field_value (ts : token list) : (string * json) * token list =
-    (* TODO, about 7 lines *) failwith "parse_field_value unimplemented"
+    (* TODO, about 7 lines *)  failwith "parse_field_value_list unimplemented"
   in
     (* Challenge Problem C8: write a function `parse_field_value_list` that
        parses a possibly empty comma-separated list of field-value

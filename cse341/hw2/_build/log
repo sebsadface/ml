@@ -1,9 +1,9 @@
-# dune utop
+# dune test
 # OCAMLPARAM: unset
 # Shared cache: disabled
 # Workspace root: /Users/seb/GitRepos/prog_ml/cse341/hw2
 # Auto-detected concurrency: 12
-$ /Users/seb/.opam/default/bin/ocamlc.opt -config > /var/folders/4z/wtmxr10961z4jm85qtnhd6rr0000gn/T/dune_9dc1c9_output
+$ /Users/seb/.opam/default/bin/ocamlc.opt -config > /var/folders/4z/wtmxr10961z4jm85qtnhd6rr0000gn/T/dune_621e8c_output
 # Dune context:
 #  { name = "default"
 #  ; kind = "default"
@@ -113,3 +113,4 @@ $ /Users/seb/.opam/default/bin/ocamlc.opt -config > /var/folders/4z/wtmxr10961z4
 #      ; windows_unicode = false
 #      }
 #  }
+$ (cd _build/default && ./hw2test.exe)

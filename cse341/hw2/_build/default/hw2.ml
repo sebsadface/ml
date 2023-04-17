@@ -41,7 +41,7 @@ let rec concat_with (sep, ss) =
   match ss with
   | [] -> ""
   | a :: [] -> a
-  | a :: b :: ss' -> a ^ sep ^ b ^ sep ^ concat_with(sep, ss')
+  | a :: ss' -> a ^ sep ^ concat_with(sep, ss')
 
 (* 3 *)
 let quote_string s = "\"" ^ s ^ "\""
@@ -127,7 +127,7 @@ let one_fields j =
   | _ -> []
 
 (* 12 *)
-let no_repeats xs = List.length xs = 0 || dedup xs = xs 
+let no_repeats xs = List.length xs = 0 || dedup xs = sort xs
 
 (* 13 *)
 let rec recursive_no_field_repeats j = 
@@ -186,27 +186,39 @@ type point = { latitude: float; longitude: float }
 
 (* 17 *)
 let in_rect (r, p) = 
-  failwith "Need to implement: in_rect"
+  p.latitude <= r.max_latitude && p.latitude >= r.min_latitude && p.longitude <= r.max_longitude && p.longitude >= r.min_longitude
 
 (* 18 *)
 let point_of_json j = 
-  failwith "Need to implement: point_of_json"
+  match dot(j, "latitude"), dot(j, "longitude") with
+  | Some Num la, Some Num lo -> Some {latitude = la; longitude = lo}
+  | _ -> None
 
 (* 19 *)
 let rec filter_access_path_in_rect (fs, r, js) = 
-  failwith "Need to implement: filter_access_path_in_rect"
+  match js with 
+  | [] -> []
+  | j :: js' -> 
+    match dots(j, fs) with
+    | None -> filter_access_path_in_rect(fs, r, js')
+    | Some h -> 
+      match point_of_json h with
+      | Some p -> if in_rect(r, p) then j :: filter_access_path_in_rect(fs, r, js') else filter_access_path_in_rect(fs, r, js')
+      | None -> filter_access_path_in_rect(fs, r, js')
 
 (* 20 *)
-(* write your comment here *)
+(* Both filter_access_path_value and filter_access_path_in_rect are recursive functions that take in a JSON list and filter them 
+based on certain conditions. One way to refactor these functions could be to create a higher-order function that takes in a 
+filtering function as an argument, and use it to filter the list of JSON objects. Then, we could define filter_access_path_value 
+and filter_access_path_in_rect as functions that take in the appropriate filtering function as an argument and pass it to the 
+higher-order function. My annoyance level was 10 out of 10 *)
 
 (* For this section, we provide the definition of U district and the functions
  * to calculate a histogram. Use these to create the bindings as requested. 
  * But notice our implementation of histogram uses *your* definition of count_occurrences
  *)
  (* We provide this code commented out because it uses some of your functions 
-    that you haven't implemented yet *)
-
-(*
+    that you haven't implemented yet *) 
 exception SortIsBroken
 
 (* The definition of the U district for purposes of this assignment :) *)
@@ -238,11 +250,10 @@ let complete_bus_positions_list =
   | Some (Array xs) -> xs
   | _ -> failwith "complete_bus_positions_list"
 
-*)
 exception Unimplemented
-let route_histogram     = Unimplemented
-let top_three_routes    = Unimplemented
-let buses_in_ud         = Unimplemented
-let ud_route_histogram  = Unimplemented
-let top_three_ud_routes = Unimplemented
-let all_fourty_fours    = Unimplemented
+let route_histogram     = histogram_for_access_path(["vehicle"; "trip"; "route_num"], complete_bus_positions_list)
+let top_three_routes    = firsts(take(3, route_histogram))
+let buses_in_ud         = filter_access_path_in_rect(["vehicle"; "position"], u_district, complete_bus_positions_list)
+let ud_route_histogram  = histogram_for_access_path(["vehicle"; "trip"; "route_num"], buses_in_ud)
+let top_three_ud_routes = firsts(take(3, ud_route_histogram))
+let all_fourty_fours    = filter_access_path_value(["vehicle"; "trip"; "route_num"], "44", complete_bus_positions_list)
