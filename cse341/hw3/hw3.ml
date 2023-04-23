@@ -1,6 +1,6 @@
 (* NOTE: Uncomment the following line if you want to #use this file in utop
  * (optionally, call it from utop directly): *)
-(* #mod_use "hw3types.ml";; *)
+#mod_use "hw3types.ml";;
 
 
 (* NOTE: to get rid off the red-wiggles in VSCode, first compile the
@@ -13,42 +13,47 @@ open Hw3types
 (**** Implement the following functions, remembering the "important note on function bindings" in the assignment write-up ****)
 
 (* #1 *)
-let only_lowercase =
-  failwith "Need to implement only_lowercase"
+let only_lowercase = List.filter (fun x -> Char.lowercase_ascii(x.[0]) = x.[0])
 
 (* #2 *)
-let longest_string1 =
-  failwith "Need to implement longest_string1"
+let longest_string1 = List.fold_left (fun acc x -> if String.length x > String.length acc then x else acc) ""
 
 (* #3 *)
-let longest_string2 =
-  failwith "Need to implement longest_string2"
+let longest_string2 = List.fold_left (fun acc x -> if String.length x >= String.length acc then x else acc) ""
 
 (* #4 *)
-let longest_string_helper f =
-  failwith "Need to implement longest_string_helper"
+let longest_string_helper f = List.fold_left (fun acc x -> if f (String.length x) (String.length acc) then x else acc) ""
 
-let longest_string3 =
-  failwith "Need to implement longest_string3"
+let longest_string3 = longest_string_helper (>)
 
-let longest_string4 =
-    failwith "Need to implement longest_string4"
+let longest_string4 = longest_string_helper (>=)
   
 (* #5 *)
-let longest_lowercase =
-  failwith "Need to implement longest_lowercase"
+let longest_lowercase = longest_string1 % only_lowercase 
 
 (* #6 *)
-let caps_no_X_string =
-  failwith "Need to implement caps_no_X_string"
+let caps_no_X_string = String.concat "" % String.split_on_char 'X' % String.capitalize_ascii
 
 (* #7 *)
 let rec first_answer f xs = 
-  failwith "Need to implement first_answer"
+  match xs with
+  | [] -> raise NoAnswer
+  | x :: xs' -> 
+    match f x with
+    | Some v -> v
+    | None -> first_answer xs'
 
 (* #8 *)
 let all_answers f xs = 
-  failwith "Need to implement all_answers"
+  let rec helper f acc xs =
+    match xs with 
+    | [] -> Some acc
+    | x :: xs' ->
+      match f x with
+      | None -> None
+      | Some lst -> helper f (acc @ lst) xs'
+  in
+  helper f [] xs
 
 (* #9 *)
 let count_wildcards =
