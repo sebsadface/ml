@@ -1,2 +1,2 @@
-# prog_ml
+# ml
 OCaml projects
